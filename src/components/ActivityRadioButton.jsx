@@ -15,13 +15,13 @@ function ActivityRadioButton({
           type="radio"
           name={name}
           value={value}
-          checked={formState.activity === value}
+          checked={formState.activity === name}
           onChange={handleInputChange}
           required
         />
         <label
           htmlFor={name}
-          onClick={() => handleInputChange(null, type, value)}
+          onClick={() => handleInputChange(null, type, name)}
         >
           {value}
         </label>

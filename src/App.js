@@ -3,26 +3,47 @@ import "./App.css";
 import Activities from "./components/Activities";
 import ParamsInputs from "./components/Params";
 import Sex from "./components/Sex";
+import {
+  decreaseWeightCalc,
+  increaseWeightCalc,
+  supportWeightCalc,
+} from "./utils";
+
+const defaultState = {
+  gender: "male",
+  age: 0,
+  height: 0,
+  weight: 0,
+  activity: "minimal",
+};
 
 function App() {
   const [isResultsShown, setIsResultsShown] = React.useState(false);
-  const [formState, setFormState] = React.useState({
-    gender: "male",
-    age: 0,
-    height: 0,
-    weight: 0,
-    activity: "",
-  });
+  const [formState, setFormState] = React.useState(defaultState);
 
   const isAllFieldsChecked = Object.values(formState).every(
     (item) => Boolean(item) === true
   );
 
+  const isOneOfFieldsFilled = Object.values(formState).some(
+    (item) => Number(item) > 0
+  );
+
+  const handleClearClick = () => {
+    setFormState(defaultState);
+    setIsResultsShown(false);
+  };
+
+  const handleSubmitClick = (e) => {
+    e.preventDefault();
+    setIsResultsShown(true);
+  };
+
   const handleInputChange = (ev, type, value) => {
     if (ev) {
       setFormState({
         ...formState,
-        [type]: +ev.target.value,
+        [type]: ev.target.value,
       });
     } else {
       setFormState({
@@ -31,6 +52,14 @@ function App() {
       });
     }
   };
+  const { gender, weight, height, age, activity } = formState;
+  const supportWeight = supportWeightCalc(
+    gender,
+    weight,
+    height,
+    age,
+    activity
+  );
 
   return (
     <main className="main">
@@ -59,7 +88,7 @@ function App() {
                 name="submit"
                 type="submit"
                 disabled={!isAllFieldsChecked}
-                onClick={() => setIsResultsShown(true)}
+                onClick={handleSubmitClick}
               >
                 Рассчитать
               </button>
@@ -67,7 +96,8 @@ function App() {
                 className="form__reset-button"
                 name="reset"
                 type="reset"
-                disabled
+                disabled={!isOneOfFieldsFilled}
+                onClick={handleClearClick}
               >
                 <svg
                   width="24"
@@ -95,19 +125,25 @@ function App() {
             <ul className="counter__result-list">
               <li className="counter__result-item">
                 <h3>
-                  <span id="calories-norm">3 800</span> ккал
+                  <span id="calories-norm"> {supportWeight}</span> ккал
                 </h3>
                 <p>поддержание веса</p>
               </li>
               <li className="counter__result-item">
                 <h3>
-                  <span id="calories-minimal">3 300</span> ккал
+                  <span id="calories-minimal">
+                    {increaseWeightCalc(supportWeight)}
+                  </span>{" "}
+                  ккал
                 </h3>
                 <p>снижение веса</p>
               </li>
               <li className="counter__result-item">
                 <h3>
-                  <span id="calories-maximal">4 000</span> ккал
+                  <span id="calories-maximal">
+                    {decreaseWeightCalc(supportWeight)}
+                  </span>
+                  ккал
                 </h3>
                 <p>набор веса</p>
               </li>

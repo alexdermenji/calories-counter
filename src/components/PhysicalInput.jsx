@@ -23,7 +23,6 @@ function PhysicalInput({
           value={formState[name]}
           type="text"
           id={id}
-          // name={name}
           placeholder="0"
           inputMode="decimal"
           maxLength="3"
